@@ -19,7 +19,6 @@ SUMMARY = "self assembling fabric of ruby daemons"
 Dir.glob('tasks/*.rake').each { |r| Rake.application.add_import r }
 
 spec = Gem::Specification.new do |s|
-
   s.name = GEM
   s.version = Nanite::VERSION
   s.platform = Gem::Platform::RUBY
@@ -30,12 +29,16 @@ spec = Gem::Specification.new do |s|
   s.author = AUTHOR
   s.email = EMAIL
   s.homepage = HOMEPAGE
-
   s.bindir       = "bin"
-  s.executables  = %w( nanite-agent nanite-mapper nanite-admin )
-
   s.add_dependency('amqp', '>= 0.6.0')
-  s.add_dependency('json', '>= 1.1.7')
+  
+  if(defined?(JRUBY_VERSION))
+    s.add_dependency('json-jruby') # if jruby building
+    s.executables  = %w( jnanite-agent jnanite-mapper jnanite-admin )
+  else
+    s.add_dependency('json', '>= 1.1.7')
+    s.executables  = %w( nanite-agent nanite-mapper nanite-admin )
+  end
 
   s.require_path = 'lib'
   s.files = %w(LICENSE README.rdoc Rakefile TODO) + Dir.glob("{lib,bin,specs}/**/*")
